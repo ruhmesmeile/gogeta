@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"errors"
 	"flag"
 	"github.com/coreos/go-etcd/etcd"
