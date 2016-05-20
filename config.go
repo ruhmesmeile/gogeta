@@ -28,7 +28,7 @@ type Config struct {
 func (c *Config) getEtcdClient() (*etcd.Client, error) {
 	if c.client == nil {
 		if c.tls {
-			c.client, err = etcd.newTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
+			c.client, err = etcd.NewTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
 
 			if err != nil {
 				return nil, errors.New("Unable to create TLS client for etcd2, check your credential files")
