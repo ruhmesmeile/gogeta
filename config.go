@@ -19,11 +19,23 @@ type Config struct {
 	forceFwSsl         bool
 	UrlHeaderParam     string
 	cpuProfile         string
+	tls 							 bool
+	cert               string
+	key                string
+	ca                 string
 }
 
 func (c *Config) getEtcdClient() (*etcd.Client, error) {
 	if c.client == nil {
-		c.client = etcd.NewClient([]string{c.etcdAddress})
+		if c.tls {
+			c.client, err = etcd.newTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
+
+			if err != nil {
+				return nil, errors.New("Unable to create TLS client for etcd2, check your credential files")
+			}
+		} else {
+			c.client = etcd.NewClient([]string{c.etcdAddress})
+		}
 		if !c.client.SyncCluster() {
 			return nil, errors.New("Unable to sync with etcd cluster, check your configuration or etcd status")
 		}
@@ -43,6 +55,10 @@ func parseConfig() *Config {
 	flag.IntVar(&config.lastAccessInterval, "lastAccessInterval", 10, "Interval (in seconds to refresh last access time of a service")
 	flag.BoolVar(&config.forceFwSsl, "forceFwSsl", false, "If not x-forwarded-proto set to https, then redirecto to the equivalent https url")
 	flag.StringVar(&config.cpuProfile, "cpuProfile", "/tmp/gogeta.prof", "File to dump cpuProfile")
+	flag.BoolVar(&config.tls, "tls", false, "Enable etcd2 client TLS")
+	flag.StringVar(&config.cert, "cert", "/etc/ssl/certs/cert.pem", "Client certificate for TLS-secured etcd2 communication")
+	flag.StringVar(&config.key, "key", "/etc/ssl/certs/key.pem", "Client key for TLS-secured etcd2 communication")
+	flag.StringVar(&config.ca, "ca", "/etc/ssl/certs/ca.pem", "CA certificate for TLS-secured etcd2 communication")
 	flag.Parse()
 
 	glog.Infof("Dumping Configuration")
@@ -56,6 +72,10 @@ func parseConfig() *Config {
 	glog.Infof("  forceFwSsl: %t", config.forceFwSsl)
 	glog.Infof("  UrlHeaderParam: %s", config.UrlHeaderParam)
 	glog.Infof("  cpuProfile: %s", config.cpuProfile)
+	glog.Infof("  tls: %s", config.tls)
+	glog.Infof("  cert: %s", config.cert)
+	glog.Infof("  key: %s", config.key)
+	glog.Infof("  ca: %s", config.ca)
 
 	return config
 }
