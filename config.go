@@ -29,7 +29,7 @@ type Config struct {
 func (c *Config) getEtcdClient() (*etcd.Client, error) {
 	if c.client == nil {
 		if c.tls {
-			err := errors.New();
+			err := errors.New("Empty error");
 			c.client, err = etcd.NewTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
 
 			if err != nil {
