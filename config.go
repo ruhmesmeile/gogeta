@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"errors"
 	"flag"
 	"github.com/coreos/go-etcd/etcd"
@@ -32,7 +33,8 @@ func (c *Config) getEtcdClient() (*etcd.Client, error) {
 			c.client, err = etcd.NewTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
 
 			if err != nil {
-				return nil, errors.New("Unable to create TLS client for etcd2, check your credential files", err)
+				log.Println("Unable to create TLS client for etcd2, check your credential files", err)
+				return nil, errors.New("Unable to create TLS client for etcd2, check your credential files")
 			}
 		} else {
 			c.client = etcd.NewClient([]string{c.etcdAddress})
