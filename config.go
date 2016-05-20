@@ -33,14 +33,12 @@ func (c *Config) getEtcdClient() (*etcd.Client, error) {
 			c.client, err = etcd.NewTLSClient([]string{c.etcdAddress}, c.cert, c.key, c.ca)
 
 			if err != nil {
-				log.Println("Unable to create TLS client for etcd2, check your credential files: ", err)
 				return nil, errors.New("Unable to create TLS client for etcd2, check your credential files")
 			}
 		} else {
 			c.client = etcd.NewClient([]string{c.etcdAddress})
 		}
 		if !c.client.SyncCluster() {
-			log.Println("Error syncing cluster: ", err)
 			return nil, errors.New("Unable to sync with etcd cluster, check your configuration or etcd status")
 		}
 	}

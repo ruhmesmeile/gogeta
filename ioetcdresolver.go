@@ -113,9 +113,9 @@ func (service *Service) equals(other *Service) bool {
 }
 
 func (r *IoEtcdResolver) resolve(domainName string) (http.Handler, error) {
-	glog.V(5).Infof("Looking for domain : %s ", domainName)
+	glog.Infof("Looking for domain : %s ", domainName)
 	domain := r.domains[domainName]
-	glog.V(5).Infof("Services:%s", r.services)
+	glog.Infof("Services:%s", r.services)
 	if domain != nil {
 		service := r.services[domain.value]
 		if service == nil {
@@ -139,7 +139,7 @@ func (r *IoEtcdResolver) resolve(domainName string) (http.Handler, error) {
 		}
 
 	}
-	glog.V(5).Infof("Domain %s not found", domainName)
+	glog.Infof("Domain %s not found", domainName)
 	return nil, errors.New("Domain not found")
 }
 
@@ -161,7 +161,7 @@ func (r *IoEtcdResolver) setLastAccessTime(service *Service) {
 		t := service.lastAccess.Format(TIME_FORMAT)
 		_, error = client.Set(lastAccessKey, t, 0)
 
-		glog.V(5).Infof("Settign lastAccessKey to :%s", t)
+		glog.Infof("Settign lastAccessKey to :%s", t)
 		if error != nil {
 			glog.Errorf("error :%s", error)
 		}
